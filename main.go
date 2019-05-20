@@ -26,8 +26,11 @@ func main() {
 	// fmt.Println(<-c)
 	// fmt.Println(<-c)
 
-	for i := 0; i < len(links); i++ {
-		fmt.Println(<-c)
+	// range also says -- wait for channel to return then run the body for the for loop
+	// l is what we get back from range
+	// l:= range c is the same as <-c
+	for l := range c {
+		go checkLink(l, c)
 	}
 }
 
@@ -35,10 +38,10 @@ func checkLink(link string, c chan string) {
 	_, err := http.Get(link)
 	if err != nil {
 		fmt.Println(link, "might be down!")
-		c <- "Site might be down"
+		c <- link
 		return
 	}
 
 	fmt.Println(link, "is up and working!")
-	c <- "Site is up"
+	c <- link
 }
